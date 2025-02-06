@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:apptry/backend/database.dart';
 
 class EntryPage extends StatefulWidget {
-  const EntryPage({super.key});
+  final String phone;
+  const EntryPage({super.key, this.phone = ''});
 
   @override
   State<EntryPage> createState() => _EntryPageState();
@@ -36,6 +37,31 @@ class _EntryPageState extends State<EntryPage> {
     himaliniController.clear();
     badshahController.clear();
     othersController.clear();
+  }
+
+  Future<void> getNameHere(String phone) async {
+    try {
+      String name = await getName(phone);
+      setState(() {
+        nameController.text = name;
+      });
+    } catch (e) {
+      nameController.text = "Not Found";
+    } finally {
+      setState(() {
+        isNameLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.phone != '') {
+      phoneController.text = widget.phone;
+      nameController.text = 'Loading...';
+      getNameHere(phoneController.text);
+    }
   }
 
   @override

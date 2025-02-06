@@ -1,4 +1,5 @@
 import 'package:apptry/backend/database.dart';
+import 'package:apptry/pages/entries/new_entry.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 
@@ -42,6 +43,21 @@ class _CustomerEntriesPageState extends State<CustomerEntriesPage> {
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.green.shade900,
         elevation: 0,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EntryPage(
+                        phone: widget.phone,
+                      )));
+        },
+        backgroundColor: Colors.green.shade900,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
       body: SafeArea(
         child: RefreshIndicator(
