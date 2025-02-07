@@ -364,6 +364,12 @@ class _EntryPageState extends State<EntryPage> {
                                 },
                               ]) ...[
                                 TextFormField(
+                                  validator: (value) {
+                                    if (int.tryParse(value!)! > 1000) {
+                                      return 'Number of bags can\'t be more than 1000';
+                                    }
+                                    return null;
+                                  },
                                   controller: item['controller']
                                       as TextEditingController,
                                   decoration: InputDecoration(
