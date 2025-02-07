@@ -165,13 +165,13 @@ class _CustomerEntriesPageState extends State<CustomerEntriesPage> {
                                   childAspectRatio: 3,
                                   children: [
                                     if ((entry.data['pukhraj'] ?? 0) > 0)
-                                      _buildProductTile(
-                                          'Pukhraj', entry.data['pukhraj'],
+                                      _buildProductTile('Kufri Pukhraj',
+                                          entry.data['pukhraj'],
                                           isRemove:
                                               entry.data['type'] == 'remove'),
                                     if ((entry.data['jyoti'] ?? 0) > 0)
                                       _buildProductTile(
-                                          'Jyoti', entry.data['jyoti'],
+                                          'Kufri Jyoti', entry.data['jyoti'],
                                           isRemove:
                                               entry.data['type'] == 'remove'),
                                     if ((entry.data['diamant'] ?? 0) > 0)
