@@ -122,6 +122,10 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
     if (label == 'Pukhraj' || label == 'Jyoti') {
       label = 'Kufri $label';
     }
+
+    if (int.parse(value) == 0) {
+      return Container();
+    }
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
       padding: EdgeInsets.all(8),
