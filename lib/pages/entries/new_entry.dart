@@ -14,16 +14,49 @@ class _EntryPageState extends State<EntryPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController slipController = TextEditingController();
+
   final TextEditingController pukhrajController = TextEditingController();
+  final TextEditingController pukhrajRationController = TextEditingController();
+  final TextEditingController pukhrajGoliController = TextEditingController();
+  final TextEditingController pukhrajSeedController = TextEditingController();
+  
   final TextEditingController jyotiController = TextEditingController();
+  final TextEditingController jyotiRationController = TextEditingController();
+  final TextEditingController jyotiGoliController = TextEditingController();
+  final TextEditingController jyotiSeedController = TextEditingController();
+
   final TextEditingController diamantController = TextEditingController();
+  final TextEditingController diamantRationController = TextEditingController();
+  final TextEditingController diamantGoliController = TextEditingController();
+  final TextEditingController diamantSeedController = TextEditingController();
+
   final TextEditingController cardinalController = TextEditingController();
+  final TextEditingController cardinalRationController =
+      TextEditingController();
+  final TextEditingController cardinalGoliController = TextEditingController();
+  final TextEditingController cardinalSeedController = TextEditingController();
+
   final TextEditingController himaliniController = TextEditingController();
+  final TextEditingController himaliniRationController =
+      TextEditingController();
+  final TextEditingController himaliniGoliController = TextEditingController();
+  final TextEditingController himaliniSeedController = TextEditingController();
+
   final TextEditingController badshahController = TextEditingController();
+  final TextEditingController badshahRationController = TextEditingController();
+  final TextEditingController badshahGoliController = TextEditingController();
+  final TextEditingController badshahSeedController = TextEditingController();
+
   final TextEditingController othersController = TextEditingController();
+  final TextEditingController othersRationController = TextEditingController();
+  final TextEditingController othersGoliController = TextEditingController();
+  final TextEditingController othersSeedController = TextEditingController();
+
   String type = 'add';
   bool isNameLoading = false;
   final _formKey = GlobalKey<FormState>(); // Add form key for validation
+
+  List<String> shownVarieties = [];
 
   // Method to clear all form fields
   void _clearForm() {
@@ -64,8 +97,78 @@ class _EntryPageState extends State<EntryPage> {
     }
   }
 
+  void _updateTotalSum(Map<String, dynamic> item) {
+    final rationValue = int.tryParse(item['ration'].text) ?? 0;
+    final goliValue = int.tryParse(item['goli'].text) ?? 0;
+    final seedValue = int.tryParse(item['seed'].text) ?? 0;
+
+    final total = rationValue + goliValue + seedValue;
+
+    setState(() {
+      (item['controller'] as TextEditingController).text = total.toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final allVarieties = [
+      {
+        'id': 'Pukhraj',
+        'controller': pukhrajController,
+        'label': 'Kufri Pukhraj',
+        'ration': pukhrajRationController,
+        'goli': pukhrajGoliController,
+        'seed': pukhrajSeedController
+      },
+      {
+        'id': 'Jyoti',
+        'controller': jyotiController,
+        'label': 'Kufri Jyoti',
+        'ration': jyotiRationController,
+        'goli': jyotiGoliController,
+        'seed': jyotiSeedController
+      },
+      {
+        'id': 'Diamant',
+        'controller': diamantController,
+        'label': 'Diamant',
+        'ration': diamantRationController,
+        'goli': diamantGoliController,
+        'seed': diamantSeedController
+      },
+      {
+        'id': 'Cardinal',
+        'controller': cardinalController,
+        'label': 'Cardinal',
+        'ration': cardinalRationController,
+        'goli': cardinalGoliController,
+        'seed': cardinalSeedController
+      },
+      {
+        'id': 'Himalini',
+        'controller': himaliniController,
+        'label': 'Himalini',
+        'ration': himaliniRationController,
+        'goli': himaliniGoliController,
+        'seed': himaliniSeedController
+      },
+      {
+        'id': 'Badshah',
+        'controller': badshahController,
+        'label': 'Badshah',
+        'ration': badshahRationController,
+        'goli': badshahGoliController,
+        'seed': badshahSeedController
+      },
+      {
+        'id': 'Others',
+        'controller': othersController,
+        'label': 'Others',
+        'ration': othersRationController,
+        'goli': othersGoliController,
+        'seed': othersSeedController
+      },
+    ];
     return Scaffold(
       backgroundColor: Colors.green.shade50,
       appBar: AppBar(
@@ -332,37 +435,9 @@ class _EntryPageState extends State<EntryPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
-                              const SizedBox(height: 16),
-                              for (var item in [
-                                {
-                                  'controller': pukhrajController,
-                                  'label': 'Kufri Pukhraj'
-                                },
-                                {
-                                  'controller': jyotiController,
-                                  'label': 'Kufri Jyoti'
-                                },
-                                {
-                                  'controller': diamantController,
-                                  'label': 'Diamant'
-                                },
-                                {
-                                  'controller': cardinalController,
-                                  'label': 'Cardinal'
-                                },
-                                {
-                                  'controller': himaliniController,
-                                  'label': 'Himalini'
-                                },
-                                {
-                                  'controller': badshahController,
-                                  'label': 'Badshah'
-                                },
-                                {
-                                  'controller': othersController,
-                                  'label': 'Others'
-                                },
-                              ]) ...[
+                              const SizedBox(height: 8),
+                              for (var item in allVarieties.where(
+                                  (v) => shownVarieties.contains(v['id']))) ...[
                                 TextFormField(
                                   validator: (value) {
                                     if (int.tryParse(value!)! > 1000) {
@@ -370,6 +445,7 @@ class _EntryPageState extends State<EntryPage> {
                                     }
                                     return null;
                                   },
+                                  readOnly: true,
                                   controller: item['controller']
                                       as TextEditingController,
                                   decoration: InputDecoration(
@@ -384,7 +460,99 @@ class _EntryPageState extends State<EntryPage> {
                                   keyboardType: TextInputType.number,
                                 ),
                                 const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: item['ration']
+                                            as TextEditingController,
+                                        decoration: InputDecoration(
+                                          label: Text('Ration'),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          _updateTotalSum(item);
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: item['goli']
+                                            as TextEditingController,
+                                        decoration: InputDecoration(
+                                          label: Text('Goli'),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          _updateTotalSum(item);
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: item['seed']
+                                            as TextEditingController,
+                                        decoration: InputDecoration(
+                                          label: Text('Seed'),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          _updateTotalSum(item);
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 7),
+                                Center(child: Text("---")),
+                                const SizedBox(height: 16),
                               ],
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Add Variety'),
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: allVarieties
+                                                .where((v) => !shownVarieties
+                                                    .contains(v['id']))
+                                                .map((variety) => ListTile(
+                                                      title: Text(
+                                                          variety['label']
+                                                              as String),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          shownVarieties.add(
+                                                              variety['id']
+                                                                  as String);
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ))
+                                                .toList(),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text('Add Variety'),
+                              ),
                             ],
                           ),
                         ),

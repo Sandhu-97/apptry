@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   void loadTotalBags() async {
     try {
-      num bags = await getTotalBags();
+      num bags = await fetchTotalBags();
       setState(() {
         totalBags = bags;
         _isLoading = false;
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: RefreshIndicator(
           color: Colors.green.shade900,
-          onRefresh: () async{
+          onRefresh: () async {
             loadTotalBags();
           },
           child: SingleChildScrollView(
@@ -76,58 +76,59 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 30),
                 _isLoading
-                  ? Center(child: CircularProgressIndicator(
-                      color: Colors.green.shade900,
-                    ))
-                  : GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        loadTotalBags();
-                      },
-                      onDoubleTap: () {
-                        Navigator.pushNamed(context, 'cold-store-details');
-                      },
-                      child: Card(
-                        elevation: 8,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Colors.white, Colors.green.shade50],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: Colors.green.shade900,
+                      ))
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          loadTotalBags();
+                        },
+                        onDoubleTap: () {
+                          Navigator.pushNamed(context, 'cold-store-details');
+                        },
+                        child: Card(
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                "Total Bags",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.green.shade900,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.white, Colors.green.shade50],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              const SizedBox(height: 10),
-                              Text(
-                                totalBags.toString(),
-                                style: TextStyle(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green.shade900,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Total Bags",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.green.shade900,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                Text(
+                                  totalBags.toString(),
+                                  style: TextStyle(
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green.shade900,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
                 const SizedBox(height: 30),
                 Wrap(
                   spacing: 16,
@@ -145,6 +146,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'login');
+                    },
+                    child: Text("Logout"))
               ],
             ),
           ),
