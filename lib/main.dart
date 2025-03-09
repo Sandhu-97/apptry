@@ -6,7 +6,7 @@ import 'package:apptry/pages/entries/entry.dart';
 // ignore: unused_import
 import 'package:apptry/pages/entries/new_entry.dart';
 import 'package:apptry/pages/entries/new_entry_page.dart';
-import 'package:apptry/pages/entries/variety_model.dart';
+import 'package:apptry/models/variety_model.dart';
 import 'package:apptry/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

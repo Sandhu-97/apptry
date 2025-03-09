@@ -1,6 +1,6 @@
 import 'package:apptry/backend/database.dart';
 import 'package:apptry/constants.dart';
-import 'package:apptry/pages/entries/variety_model.dart';
+import 'package:apptry/models/variety_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
