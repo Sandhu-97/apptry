@@ -1,4 +1,5 @@
 import 'package:apptry/backend/database.dart';
+import 'package:apptry/extensions/string_extension.dart';
 import 'package:apptry/pages/customers/customer_entries.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
   String name = '';
   Map<dynamic, dynamic> customerDetails = {};
   bool isLoading = false;
+  num total = 0;
 
   @override
   void initState() {
@@ -31,6 +33,9 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
     try {
       customerDetails = await getCustomerData(widget.phone);
       name = await getName(widget.phone);
+      for (var field in customerDetails.keys) {
+        total += customerDetails[field];
+      }
       setState(() {
         isLoading = false;
       });
@@ -88,10 +93,9 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ...customerDetails.entries
-                        .where((entry) => !entry.key.startsWith('\$'))
-                        .map((entry) =>
-                            _buildDetailRow(entry.key, entry.value.toString())),
+                    _buildDetailRow("Total", total.toString()),
+                    ...customerDetails.entries.map((entry) =>
+                        _buildDetailRow(entry.key, entry.value.toString())),
                   ],
                 ),
               ),
@@ -118,17 +122,14 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
   }
 
   Widget _buildDetailRow(String label, String value) {
-    label = label[0].toUpperCase() + label.substring(1);
-    if (label == 'Pukhraj' || label == 'Jyoti') {
-      label = 'Kufri $label';
-    }
+    label = label.replaceAll("_", " - ").toTitleCase;
 
     if (int.parse(value) == 0) {
       return Container();
     }
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),

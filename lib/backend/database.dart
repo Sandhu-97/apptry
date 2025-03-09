@@ -111,18 +111,29 @@ Future<num> fetchTotalBags() async {
   return -1;
 }
 
-Future<Map> fetchVarietyWiseTotalBags() async {
+Future<Map> fetchVarietyWiseTotalBags({String phone = ""}) async {
+  final List<String> addQuery = [
+    Query.select(varietyPairs),
+    Query.equal('type', 'add')
+  ];
+  final List<String> removeQuery = [
+    Query.select(varietyPairs),
+    Query.equal('type', 'remove')
+  ];
+  if (phone.isNotEmpty) {
+    addQuery.add(Query.equal('phone', phone));
+    removeQuery.add(Query.equal('phone', phone));
+  }
   try {
     final additons = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: logsCollectionId,
-        queries: [Query.select(varietyPairs), Query.equal('type', 'add')]);
+        queries: addQuery);
 
     final removals = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: logsCollectionId,
-        queries: [Query.select(varietyPairs), Query.equal('type', 'remove')]);
-
+        queries: removeQuery);
     final Map result = {};
     final Map addedBags = {};
     final Map removedBags = {};
@@ -164,6 +175,26 @@ Future<List> fetchSlipHistory() async {
           Query.select(
             ['phone', 'slip', 'type', '\$createdAt'],
           ),
+          Query.orderDesc('\$createdAt')
+        ]);
+    return result.documents;
+  } catch (e) {
+    print(e);
+  }
+
+  return [];
+}
+
+Future<List> fetchSlipHistoryByPhone(String phone) async {
+  try {
+    final result = await databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: logsCollectionId,
+        queries: [
+          Query.select(
+            ['phone', 'slip', 'type', '\$createdAt'],
+          ),
+          Query.equal('phone', phone),
           Query.orderDesc('\$createdAt')
         ]);
     return result.documents;
@@ -275,54 +306,10 @@ Future<List<Document>> getAllCustomers() async {
   return [];
 }
 
-Future<num> getTotalBags() async {
-  try {
-    final result = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: storageCollectionId,
-        queries: [Query.greaterThan('total', 0)]);
-    num total = 0;
-    for (var element in result.documents) {
-      total += element.data['total'];
-    }
-    return total;
-  } catch (e) {
-    print(e);
-  }
-  return -1;
-}
-
-Future<List<Document>> getColdStorageBagsDetails() async {
-  try {
-    final result = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: storageCollectionId,
-        queries: [
-          Query.select([
-            'pukhraj',
-            'jyoti',
-            'diamant',
-            'cardinal',
-            'himalini',
-            'badshah',
-            'others',
-            'total'
-          ])
-        ]);
-    return result.documents;
-  } catch (e) {
-    print(e);
-  }
-  return [];
-}
-
 Future<Map> getCustomerData(String phone) async {
   try {
-    final result = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: storageCollectionId,
-        queries: [Query.equal('phone', phone)]);
-    return result.documents.first.data;
+    final result = await fetchVarietyWiseTotalBags(phone: phone);
+    return result;
   } catch (e) {
     print(e);
   }
