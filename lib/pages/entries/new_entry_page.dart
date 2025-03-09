@@ -17,6 +17,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _slipController = TextEditingController();
 
+  bool _isNameLoading = false;
+  bool _isFormSubmitting = false;
+
   final _varietyControllers = {
     'Pukhraj': TextEditingController(),
     'Jyoti': TextEditingController(),
@@ -32,150 +35,587 @@ class _NewEntryPageState extends State<NewEntryPage> {
   Widget build(BuildContext context) {
     final varietyModel = Provider.of<VarietyModel>(context, listen: false);
     return Scaffold(
+      backgroundColor: Colors.green.shade50,
       appBar: AppBar(
-        title: Text("New Entry"),
+        title: Text('New Entry',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green.shade900,
+        elevation: 0,
       ),
-      body: ListView(
-        children: [
-          TextField(
-            controller: _phoneController,
-            decoration: InputDecoration(
-              labelText: "Phone",
-              hintText: "Enter customer's phone number",
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Header Card
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.green.shade100,
+                    blurRadius: 5,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "Shri Guru Har Rai Ji Cold Store",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade900,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-            onChanged: (value) async {
-              if (value.length == 10) {
-                // fetch name from phone number
-                try {
-                  final String name = await getName(value);
-                  setState(() {
-                    _nameController.text = name;
-                  });
-                } catch (e) {
-                  _nameController.text = "Customer not found";
-                }
-              }
-            },
-          ),
-          TextField(
-            controller: _nameController,
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Name",
-              hintText: "Enter customer's name",
+
+            const SizedBox(height: 20),
+
+            // Customer Information Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.green.shade50],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Customer Information',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade900,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _phoneController,
+                      decoration: InputDecoration(
+                        labelText: "Phone Number",
+                        prefixIcon:
+                            Icon(Icons.phone, color: Colors.green.shade900),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.green.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.green.shade900, width: 2),
+                        ),
+                      ),
+                      onChanged: (value) async {
+                        if (value.length == 10) {
+                          setState(() {
+                            _isNameLoading = true;
+                            _nameController.text = "Loading...";
+                          });
+                          try {
+                            final String name = await getName(value);
+                            setState(() {
+                              _nameController.text = name;
+                            });
+                          } catch (e) {
+                            setState(() {
+                              _nameController.text = "Customer not found";
+                            });
+                          } finally {
+                            setState(() {
+                              _isNameLoading = false;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _nameController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: "Customer Name",
+                        prefixIcon:
+                            Icon(Icons.person, color: Colors.green.shade900),
+                        suffixIcon: _isNameLoading
+                            ? Container(
+                                padding: const EdgeInsets.all(12),
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.green.shade900,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _slipController,
+                      decoration: InputDecoration(
+                        labelText: "Slip Number",
+                        prefixIcon:
+                            Icon(Icons.receipt, color: Colors.green.shade900),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: "add",
+                      decoration: InputDecoration(
+                        labelText: "Add/Remove",
+                        prefixIcon: Icon(Icons.compare_arrows,
+                            color: Colors.green.shade900),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: "add", child: Text("Add")),
+                        DropdownMenuItem(
+                            value: "remove", child: Text("Remove")),
+                      ],
+                      onChanged: (value) => setState(() => type = value!),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          TextField(
-            controller: _slipController,
-            decoration: InputDecoration(
-              labelText: "Slip",
-              hintText: "Enter slip number",
-            ),
-          ),
-          DropdownButtonFormField(
-              value: "add",
-              hint: Text("Add/Remove"),
-              items: [
-                DropdownMenuItem(value: "add", child: Text("Add")),
-                DropdownMenuItem(value: "remove", child: Text("Remove")),
-              ],
-              onChanged: (value) {
-                type = value.toString();
-              }),
-          for (var variety in varietyNames)
-            ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("Quantity for $variety"),
-                          content: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                for (var subVariety in subVarietyNames)
-                                  TextFormField(
-                                    initialValue: (varietyModel.getValue(
-                                                "${variety}_$subVariety")) ==
-                                            0
-                                        ? ""
-                                        : (varietyModel.getValue(
-                                                "${variety}_$subVariety"))
-                                            .toString(),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return null;
-                                      }
-                                      if (int.tryParse(value) == null) {
-                                        return "Value must be number";
-                                      }
-                                      if (int.parse(value) < 0) {
-                                        return "Value cannot be negative";
-                                      }
-                                      if (int.parse(value) > 1000) {
-                                        return "Value cannot be greater than 1000";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: subVariety,
-                                      hintText:
-                                          "Enter quantity for $subVariety",
+
+            const SizedBox(height: 20),
+
+            // Varieties Card
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.green.shade50],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Varieties',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade900,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ...varietyNames.map((variety) => Container(
+                          margin: EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.white, Colors.green.shade50],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.green.shade200),
+                          ),
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            leading: Icon(
+                              Icons.inventory_2_outlined,
+                              color: Colors.green.shade900,
+                            ),
+                            title: Text(
+                              variety,
+                              style: TextStyle(
+                                color: Colors.green.shade900,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            trailing: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _varietyControllers[variety]?.text ?? "0",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.green.shade900,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    onChanged: (value) {
-                                      varietyModel.updateValue(
-                                          "${variety}_$subVariety",
-                                          int.tryParse(value) ?? 0);
-                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.white,
+                                            Colors.green.shade50
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            "Quantity for $variety",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green.shade900,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Form(
+                                            key: _formKey,
+                                            child: Column(
+                                              children: [
+                                                for (var subVariety
+                                                    in subVarietyNames) ...[
+                                                  TextFormField(
+                                                    initialValue: (varietyModel
+                                                                .getValue(
+                                                                    "${variety}_$subVariety")) ==
+                                                            0
+                                                        ? ""
+                                                        : (varietyModel.getValue(
+                                                                "${variety}_$subVariety"))
+                                                            .toString(),
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return null;
+                                                      }
+                                                      if (int.tryParse(value) ==
+                                                          null) {
+                                                        return "Value must be number";
+                                                      }
+                                                      if (int.parse(value) <
+                                                          0) {
+                                                        return "Value cannot be negative";
+                                                      }
+                                                      if (int.parse(value) >
+                                                          1000) {
+                                                        return "Value cannot be greater than 1000";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      labelText: subVariety,
+                                                      labelStyle: TextStyle(
+                                                          color: Colors
+                                                              .green.shade900),
+                                                      hintText:
+                                                          "Enter quantity for $subVariety",
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        borderSide: BorderSide(
+                                                            color: Colors.green
+                                                                .shade300),
+                                                      ),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        borderSide: BorderSide(
+                                                            color: Colors.green
+                                                                .shade300),
+                                                      ),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        borderSide: BorderSide(
+                                                            color: Colors
+                                                                .green.shade900,
+                                                            width: 2),
+                                                      ),
+                                                      filled: true,
+                                                      fillColor: Colors.white,
+                                                    ),
+                                                    onChanged: (value) {
+                                                      varietyModel.updateValue(
+                                                          "${variety}_$subVariety",
+                                                          int.tryParse(value) ??
+                                                              0);
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                ],
+                                                const SizedBox(height: 8),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      child: Text(
+                                                        'Cancel',
+                                                        style: TextStyle(
+                                                            color: Colors.green
+                                                                .shade900),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        if (_formKey
+                                                                .currentState
+                                                                ?.validate() ==
+                                                            false) {
+                                                          return;
+                                                        }
+                                                        int totalVariety = 0;
+                                                        for (var subVariety
+                                                            in subVarietyNames) {
+                                                          totalVariety +=
+                                                              varietyModel.getValue(
+                                                                  "${variety}_$subVariety");
+                                                        }
+                                                        setState(() {
+                                                          _varietyControllers[
+                                                                      variety]
+                                                                  ?.text =
+                                                              totalVariety
+                                                                  .toString();
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor: Colors
+                                                            .green.shade900,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 12),
+                                                      ),
+                                                      child: Text(
+                                                        "Done",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Submit Button
+            ElevatedButton(
+              onPressed: _isFormSubmitting
+                  ? null
+                  : () async {
+                      setState(() {
+                        _isFormSubmitting = true;
+                      });
+                      try {
+                        final phone = _phoneController.text;
+                        final slip = int.tryParse(_slipController.text) ?? -1;
+                        final varietyMap = varietyModel.getMap();
+                        if (varietyMap.isEmpty) {
+                          throw Exception("Fields cannot be empty");
+                        }
+                        await addNewLog(phone, slip, type, varietyMap);
+                        varietyModel.deleteMap();
+                        setState(() {
+                          for (var controller in _varietyControllers.values) {
+                            controller.text = "";
+                          }
+                        });
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.white, Colors.green.shade50],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.green.shade900,
+                                    size: 50,
                                   ),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      if (_formKey.currentState?.validate() ==
-                                          false) {
-                                        return;
-                                      }
-                                      int totalVariety = 0;
-                                      for (var subVariety in subVarietyNames) {
-                                        totalVariety += varietyModel
-                                            .getValue("${variety}_$subVariety");
-                                      }
-                                      setState(() {
-                                        _varietyControllers[variety]?.text =
-                                            totalVariety.toString();
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("Done")),
-                              ],
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    "Success!",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green.shade900,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "Entry added to the log book",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.green.shade800,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  ElevatedButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green.shade900,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 32,
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Close",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
-                      });
-                },
-                child: Row(
-                  children: [
-                    Text(variety),
-                    Spacer(),
-                    Text("${_varietyControllers[variety]?.text}"),
-                  ],
-                )),
-          ElevatedButton(
-              onPressed: () async {
-                final phone = _phoneController.text;
-                final slip = int.tryParse(_slipController.text) ?? -1;
-                final varietyMap = varietyModel.getMap();
-                //await addNewLog(phone, slip, type, varietyMap);
-                // print(varietyMap);
-                varietyModel.deleteMap();
-                setState(() {
-                  for (var controller in _varietyControllers.values) {
-                    controller.text = "";
-                  }
-                });
-              },
-              child: Text("Submit")),
-        ],
+                      } catch (e) {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text("Error"),
+                                  backgroundColor: Colors.red.shade200,
+                                  content: Text(e.toString()),
+                                  contentPadding: EdgeInsets.all(30),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Close"))
+                                  ],
+                                ));
+                      } finally {
+                        _isFormSubmitting = false;
+                      }
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade900,
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: _isFormSubmitting
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      "Submit",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
