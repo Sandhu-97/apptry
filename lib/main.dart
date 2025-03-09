@@ -3,8 +3,6 @@ import 'package:apptry/pages/customers/add_customer.dart';
 import 'package:apptry/pages/cold_store_details.dart';
 import 'package:apptry/pages/customers/customers.dart';
 import 'package:apptry/pages/entries/entry_home.dart';
-// ignore: unused_import
-import 'package:apptry/pages/entries/new_entry.dart';
 import 'package:apptry/pages/entries/new_entry_page.dart';
 import 'package:apptry/models/variety_model.dart';
 import 'package:apptry/pages/login.dart';
@@ -34,7 +32,6 @@ class MyApp extends StatelessWidget {
           'login': (context) => LoginPage(),
           'customers': (context) => CustomerPage(),
           'new-customer': (context) => AddNewCustomerPage(),
-          // 'customer-entries': (context) => CustomerEntriesPage(),
           'new-entry': (context) => NewEntryPage(),
           'cold-store-details': (context) => ColdStoreDetails(),
           'entry': (context) => EntryHomePage(),

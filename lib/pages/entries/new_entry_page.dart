@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class NewEntryPage extends StatefulWidget {
-  const NewEntryPage({super.key});
+  final String phone;
+  const NewEntryPage({super.key, this.phone = ''});
 
   @override
   State<NewEntryPage> createState() => _NewEntryPageState();
@@ -19,6 +20,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
 
   bool _isNameLoading = false;
   bool _isFormSubmitting = false;
+  String type = 'add';
+  String name = '';
 
   final _varietyControllers = {
     'Pukhraj': TextEditingController(),
@@ -30,7 +33,23 @@ class _NewEntryPageState extends State<NewEntryPage> {
     'Others': TextEditingController(),
   };
 
-  String type = 'add';
+  Future<void> getLoadedName() async {
+    name = await getName(_phoneController.text);
+    setState(() {
+      _nameController.text = name;
+      _isNameLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController.text = widget.phone;
+    _nameController.text = "Loading...";
+    _isNameLoading = true;
+    getLoadedName();
+  }
+
   @override
   Widget build(BuildContext context) {
     final varietyModel = Provider.of<VarietyModel>(context, listen: false);

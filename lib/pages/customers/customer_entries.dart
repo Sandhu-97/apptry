@@ -1,5 +1,6 @@
 import 'package:apptry/backend/database.dart';
-import 'package:apptry/pages/entries/new_entry.dart';
+
+import 'package:apptry/pages/entries/new_entry_page.dart';
 import 'package:apptry/pages/entries/slip_details.dart';
 import 'package:flutter/material.dart';
 
@@ -50,7 +51,7 @@ class _CustomerEntriesPageState extends State<CustomerEntriesPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => EntryPage(
+                  builder: (context) => NewEntryPage(
                         phone: widget.phone,
                       )));
         },
