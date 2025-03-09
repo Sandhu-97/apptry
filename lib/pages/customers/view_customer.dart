@@ -93,7 +93,18 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildDetailRow("Total", total.toString()),
+                    if (isLoading)
+                      CircularProgressIndicator()
+                    else if (customerDetails.isEmpty)
+                      Text(
+                        'No data found',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.green.shade900,
+                        ),
+                      )
+                    else
+                      _buildDetailRow("Total", total.toString()),
                     ...customerDetails.entries.map((entry) =>
                         _buildDetailRow(entry.key, entry.value.toString())),
                   ],
