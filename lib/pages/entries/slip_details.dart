@@ -1,10 +1,14 @@
 import 'package:apptry/backend/database.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
+import 'package:apptry/extensions/string_extension.dart';
 
 class SlipDetailsPage extends StatefulWidget {
   final String slip;
-  const SlipDetailsPage({super.key, required this.slip});
+  final String phone;
+  final String type;
+  const SlipDetailsPage(
+      {super.key, required this.slip, required this.phone, required this.type});
 
   @override
   State<SlipDetailsPage> createState() => _SlipDetailsPageState();
@@ -14,6 +18,7 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
   List<Document> entries = [];
   bool isLoading = true;
   String? error;
+  String name = "Loading...";
 
   @override
   void initState() {
@@ -23,6 +28,8 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
 
   Future<void> loadSlipDetails() async {
     print('Loading slip details for ${widget.slip}');
+    name = await getName(widget.phone);
+    print(name);
     setState(() {
       isLoading = true;
       error = null;
@@ -30,7 +37,6 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
 
     try {
       entries = await getEntryBySlip(widget.slip);
-      print('Loaded slip details: ${entries.first.data}');
       setState(() {
         isLoading = false;
       });
@@ -48,8 +54,8 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isRemove = entries.isNotEmpty && entries.first.data['type'] == 'remove';
-    
+    final isRemove = widget.type == 'remove';
+
     return Scaffold(
       backgroundColor: Colors.green.shade50,
       appBar: AppBar(
@@ -59,86 +65,118 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: isLoading 
-          ? Center(
-              child: CircularProgressIndicator(
-                color: isRemove ? Colors.red.shade900 : Colors.green.shade900,
-              ),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isRemove 
-                              ? [Colors.white, Colors.red.shade50]
-                              : [Colors.white, Colors.green.shade50],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+        child: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: isRemove ? Colors.red.shade900 : Colors.green.shade900,
+                ),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Slip Number: ${widget.slip}',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: isRemove ? Colors.red.shade900 : Colors.green.shade900,
-                            ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isRemove
+                                ? [Colors.white, Colors.red.shade50]
+                                : [Colors.white, Colors.green.shade50],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          Divider(color: isRemove ? Colors.red.shade200 : Colors.green.shade200),
-                          if (entries.isNotEmpty)
-                            ...entries.first.data.entries
-                                .where((entry) => !entry.key.startsWith('\$'))
-                                .map((entry) => Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            entry.key,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: isRemove ? Colors.red.shade900 : Colors.green.shade900,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: isRemove ? Colors.red.shade100 : Colors.green.shade100,
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              entry.value.toString(),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Slip Number: ${widget.slip}',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: isRemove
+                                    ? Colors.red.shade900
+                                    : Colors.green.shade900,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isRemove
+                                    ? Colors.red.shade900
+                                    : Colors.green.shade900,
+                              ),
+                            ),
+                            Divider(
+                                color: isRemove
+                                    ? Colors.red.shade200
+                                    : Colors.green.shade200),
+                            if (entries.isNotEmpty)
+                              ...entries.first.data.entries
+                                  .where(
+                                    (element) => element.value > 0,
+                                  )
+                                  .map((entry) => Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              entry.key
+                                                  .replaceAll("_", " ")
+                                                  .toTitleCase,
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: isRemove ? Colors.red.shade900 : Colors.green.shade900,
+                                                color: isRemove
+                                                    ? Colors.red.shade900
+                                                    : Colors.green.shade900,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ))
-                        ],
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: isRemove
+                                                    ? Colors.red.shade100
+                                                    : Colors.green.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                entry.value.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: isRemove
+                                                      ? Colors.red.shade900
+                                                      : Colors.green.shade900,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ))
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
       ),
     );
   }

@@ -89,8 +89,11 @@ class _EntryHomePageState extends State<EntryHomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => SlipDetailsPage(
-                                          slip:
-                                              entry.data['slip'].toString())));
+                                            slip: entry.data['slip'].toString(),
+                                            phone:
+                                                entry.data['phone'].toString(),
+                                            type: entry.data['type'],
+                                          )));
                             },
                             child: Card(
                               elevation: 4,

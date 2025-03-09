@@ -44,13 +44,18 @@ Future<bool> createNewCustomer(String phone, String name) async {
 }
 
 Future<String> getName(String phone) async {
-  DocumentList docs = await databases.listDocuments(
-      databaseId: databaseId,
-      collectionId: customersCollectionId,
-      queries: [Query.equal('phone', phone)]);
+  try {
+    DocumentList docs = await databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: customersCollectionId,
+        queries: [Query.equal('phone', phone)]);
 
-  String name = (docs.documents.first.data['name']);
-  return name;
+    String name = (docs.documents.first.data['name']);
+    return name;
+  } catch (e) {
+    print(e);
+  }
+  return "";
 }
 
 Future<num> fetchTotalCustomersCount() async {
@@ -345,9 +350,10 @@ Future<List<Document>> getEntryBySlip(String slip) async {
   try {
     final result = await databases.listDocuments(
         databaseId: databaseId,
-        collectionId: entriesCollectionId,
+        collectionId: logsCollectionId,
         queries: [
           Query.equal('slip', num.parse(slip)),
+          Query.select(varietyPairs),
         ]);
     return result.documents;
   } catch (e) {
