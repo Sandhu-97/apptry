@@ -97,18 +97,24 @@ Future<num> fetchTotalBags() async {
   List<String> fields = [];
   fields = varietyPairs;
   try {
-    final result = await databases.listDocuments(
+    final additions = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: logsCollectionId,
-        queries: [Query.select(fields)]);
+        queries: [Query.select(fields), Query.equal('type', 'add')]);
+
+    final removals = await databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: logsCollectionId,
+        queries: [Query.select(fields), Query.equal('type', 'remove')]);
     num total = 0;
-    for (var doc in result.documents) {
+    for (var doc in additions.documents) {
       for (var field in doc.data.entries) {
-        if (field.key != 'phone' &&
-            field.key != 'slip' &&
-            field.key != 'type') {
-          total += field.value;
-        }
+        total += field.value;
+      }
+    }
+    for (var doc in removals.documents) {
+      for (var field in doc.data.entries) {
+        total -= field.value;
       }
     }
     return total;
@@ -120,24 +126,43 @@ Future<num> fetchTotalBags() async {
 
 Future<Map> fetchVarietyWiseTotalBags() async {
   try {
-    final document = await databases.listDocuments(
+    final additons = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: logsCollectionId,
-        queries: [Query.select(varietyPairs)]);
+        queries: [Query.select(varietyPairs), Query.equal('type', 'add')]);
 
-    final result = [];
-    final Map test = {};
-    for (var doc in document.documents) {
-      result.add(doc.data.values.first);
+    final removals = await databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: logsCollectionId,
+        queries: [Query.select(varietyPairs), Query.equal('type', 'remove')]);
+
+    final Map result = {};
+    final Map addedBags = {};
+    final Map removedBags = {};
+    for (var doc in additons.documents) {
       for (var pair in varietyPairs) {
-        if (test[pair] == null) {
-          test[pair] = doc.data[pair];
+        if (addedBags[pair] == null) {
+          addedBags[pair] = doc.data[pair];
         } else {
-          test[pair] += doc.data[pair];
+          addedBags[pair] += doc.data[pair];
         }
       }
     }
-    return test;
+
+    for (var doc in removals.documents) {
+      for (var pair in varietyPairs) {
+        if (removedBags[pair] == null) {
+          removedBags[pair] = doc.data[pair];
+        } else {
+          removedBags[pair] += doc.data[pair];
+        }
+      }
+    }
+    for (var pair in varietyPairs) {
+      result[pair] = addedBags[pair] - (removedBags[pair] ?? 0);
+    }
+    print(result);
+    return result;
   } catch (e) {
     print(e);
   }
