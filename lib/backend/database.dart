@@ -97,26 +97,13 @@ Future<num> fetchTotalBags() async {
   List<String> fields = [];
   fields = varietyPairs;
   try {
-    final additions = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: logsCollectionId,
-        queries: [Query.select(fields), Query.equal('type', 'add')]);
-
-    final removals = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: logsCollectionId,
-        queries: [Query.select(fields), Query.equal('type', 'remove')]);
+    Map result = await fetchVarietyWiseTotalBags();
     num total = 0;
-    for (var doc in additions.documents) {
-      for (var field in doc.data.entries) {
-        total += field.value;
-      }
+
+    for (var pair in fields) {
+      total += result[pair];
     }
-    for (var doc in removals.documents) {
-      for (var field in doc.data.entries) {
-        total -= field.value;
-      }
-    }
+
     return total;
   } catch (e) {
     print(e);
@@ -161,7 +148,6 @@ Future<Map> fetchVarietyWiseTotalBags() async {
     for (var pair in varietyPairs) {
       result[pair] = addedBags[pair] - (removedBags[pair] ?? 0);
     }
-    print(result);
     return result;
   } catch (e) {
     print(e);
