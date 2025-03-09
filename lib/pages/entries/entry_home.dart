@@ -1,6 +1,5 @@
 import 'package:apptry/backend/database.dart';
 import 'package:apptry/pages/entries/slip_details.dart';
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 
 class EntryHomePage extends StatefulWidget {
@@ -11,7 +10,8 @@ class EntryHomePage extends StatefulWidget {
 }
 
 class _EntryHomePageState extends State<EntryHomePage> {
-  List<Document> entries = [];
+  List entries = [];
+  List test = [];
   bool isLoading = true;
   String? error;
 
@@ -30,7 +30,7 @@ class _EntryHomePageState extends State<EntryHomePage> {
     });
 
     try {
-      entries = await getRecentEntries();
+      entries = await fetchSlipHistory();
       print('Loaded ${entries.length} entries');
       setState(() {
         isLoading = false;
@@ -122,9 +122,10 @@ class _EntryHomePageState extends State<EntryHomePage> {
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: entry.data['type'] == 'remove' 
-                                                ? Colors.red.shade900 
-                                                : Colors.green.shade900,
+                                            color:
+                                                entry.data['type'] == 'remove'
+                                                    ? Colors.red.shade900
+                                                    : Colors.green.shade900,
                                           ),
                                         ),
                                         Text(
@@ -133,24 +134,23 @@ class _EntryHomePageState extends State<EntryHomePage> {
                                                   .substring(0, 10) ??
                                               '',
                                           style: TextStyle(
-                                            color: entry.data['type'] == 'remove' 
-                                                ? Colors.red.shade700 
-                                                : Colors.green.shade700
-                                          ),
+                                              color:
+                                                  entry.data['type'] == 'remove'
+                                                      ? Colors.red.shade700
+                                                      : Colors.green.shade700),
                                         ),
                                       ],
                                     ),
                                     Divider(
-                                      color: entry.data['type'] == 'remove' 
-                                          ? Colors.red.shade200 
-                                          : Colors.green.shade200
-                                    ),
+                                        color: entry.data['type'] == 'remove'
+                                            ? Colors.red.shade200
+                                            : Colors.green.shade200),
                                     Text(
                                       'Phone: ${entry.data['phone']}',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: entry.data['type'] == 'remove' 
-                                            ? Colors.red.shade800 
+                                        color: entry.data['type'] == 'remove'
+                                            ? Colors.red.shade800
                                             : Colors.green.shade800,
                                       ),
                                     ),

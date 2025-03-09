@@ -2,7 +2,7 @@ import 'package:apptry/components/splash_screen.dart';
 import 'package:apptry/pages/customers/add_customer.dart';
 import 'package:apptry/pages/cold_store_details.dart';
 import 'package:apptry/pages/customers/customers.dart';
-import 'package:apptry/pages/entries/entry.dart';
+import 'package:apptry/pages/entries/entry_home.dart';
 // ignore: unused_import
 import 'package:apptry/pages/entries/new_entry.dart';
 import 'package:apptry/pages/entries/new_entry_page.dart';

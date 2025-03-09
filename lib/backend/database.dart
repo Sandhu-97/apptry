@@ -132,15 +132,30 @@ Future<Map> fetchVarietyWiseTotalBags() async {
         }
       }
     }
-    // for (var doc in document.documents) {
-    //   result.add(doc.data.values.toList());
-    // }
-    print(test);
     return test;
   } catch (e) {
     print(e);
   }
   return {};
+}
+
+Future<List> fetchSlipHistory() async {
+  try {
+    final result = await databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: logsCollectionId,
+        queries: [
+          Query.select(
+            ['phone', 'slip', 'type', '\$createdAt'],
+          ),
+          Query.orderDesc('\$createdAt')
+        ]);
+    return result.documents;
+  } catch (e) {
+    print(e);
+  }
+
+  return [];
 }
 
 Future<void> insertNewEntry(
