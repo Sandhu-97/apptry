@@ -81,13 +81,13 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.green.shade900,
                       ))
                     : GestureDetector(
-                        onTap: () {
+                        onDoubleTap: () {
                           setState(() {
                             _isLoading = true;
                           });
                           loadTotalBags();
                         },
-                        onDoubleTap: () {
+                        onTap: () {
                           Navigator.pushNamed(context, 'cold-store-details');
                         },
                         child: Card(

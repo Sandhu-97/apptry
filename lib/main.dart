@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'pages/home.dart';
 
 void main() async {
-  debugPrint = (String? message, {int? wrapWidth}) {};
   runApp(ChangeNotifierProvider(
       create: (context) => VarietyModel(), child: MyApp()));
 }
