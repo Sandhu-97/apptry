@@ -48,10 +48,10 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
       seed = 0;
       goli = 0;
       cut = 0;
+      
       num totalCustomersApiCall = await fetchTotalCustomersCount();
-      print(totalCustomersApiCall);
       num totalBagsApiCall = await fetchTotalBags();
-      print(totalBagsApiCall);
+
       varietyWiseMap = await fetchVarietyWiseTotalBags();
       pukhraj = varietyWiseMap['pukhraj_ration'] +
           varietyWiseMap['pukhraj_goli'] +

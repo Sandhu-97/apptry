@@ -19,11 +19,9 @@ class _EntryHomePageState extends State<EntryHomePage> {
   void initState() {
     super.initState();
     loadEntries();
-    print('EntryHomePage initialized');
   }
 
   Future<void> loadEntries() async {
-    print('Loading entries...');
     setState(() {
       isLoading = true;
       error = null;
@@ -31,12 +29,10 @@ class _EntryHomePageState extends State<EntryHomePage> {
 
     try {
       entries = await fetchSlipHistory();
-      print('Loaded ${entries.length} entries');
       setState(() {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading entries: $e');
       setState(() {
         error = e.toString();
         isLoading = false;

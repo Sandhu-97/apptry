@@ -27,9 +27,7 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
   }
 
   Future<void> loadSlipDetails() async {
-    print('Loading slip details for ${widget.slip}');
     name = await getName(widget.phone);
-    print(name);
     setState(() {
       isLoading = true;
       error = null;
@@ -41,7 +39,6 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading slip details: $e');
       setState(() {
         error = e.toString();
         isLoading = false;

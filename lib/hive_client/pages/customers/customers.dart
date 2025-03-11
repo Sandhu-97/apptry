@@ -28,7 +28,6 @@ class _CustomerPageState extends State<CustomerPage> {
         isLoading = false;
       });
     } catch (e) {
-      print("Error: $e");
       setState(() {
         isLoading = false;
       });

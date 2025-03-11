@@ -23,15 +23,11 @@ class _CustomerPageState extends State<CustomerPage> {
   Future<void> loadCustomers() async {
     try {
       final customers = await getAllCustomers();
-      for (var customer in customers) {
-        print(customer.data['name']);
-      }
       setState(() {
         allCustomers = customers;
         isLoading = false;
       });
     } catch (e) {
-      print("Error: $e");
       setState(() {
         isLoading = false;
       });

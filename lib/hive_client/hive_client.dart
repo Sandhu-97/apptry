@@ -2,8 +2,7 @@ import 'package:hive/hive.dart';
 
 void insertNewSession(Map<String, dynamic> sessionData) {
   var box = Hive.box('sessions');
-  
-  print('Session inserted');
+
 }
 
 String getSession() {
@@ -14,5 +13,4 @@ String getSession() {
 void deleteSession() {
   var box = Hive.box('sessions');
   box.delete('session');
-  print('Session deleted');
 }

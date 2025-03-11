@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:apptry/constants.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
@@ -55,7 +57,6 @@ Future<num> fetchTotalCustomersCount() async {
         databaseId: databaseId,
         collectionId: customersCollectionId,
         queries: [Query.limit(100)]);
-    print(document.documents.length);
     return document.documents.length;
   } catch (e) {
     print(e);
@@ -64,7 +65,6 @@ Future<num> fetchTotalCustomersCount() async {
 }
 
 Future<void> addNewLog(String phone, int slip, String type, Map data) async {
-  print('Adding new log');
   Map output = {
     'phone': phone,
     'slip': slip,
