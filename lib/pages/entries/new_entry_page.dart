@@ -54,6 +54,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
   Widget build(BuildContext context) {
     final varietyModel = Provider.of<VarietyModel>(context, listen: false);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.green.shade50,
       appBar: AppBar(
         title: Text('New Entry',
@@ -126,6 +127,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: "Phone Number",
                         prefixIcon:
@@ -193,6 +195,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _slipController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: "Slip Number",
                         prefixIcon:
@@ -317,7 +320,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                         ),
                                         borderRadius: BorderRadius.circular(16),
                                       ),
-                                      padding: const EdgeInsets.all(20),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 25),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -337,6 +341,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                                 for (var subVariety
                                                     in subVarietyNames) ...[
                                                   TextFormField(
+                                                    keyboardType:
+                                                        TextInputType.number,
                                                     initialValue: (varietyModel
                                                                 .getValue(
                                                                     "${variety}_$subVariety")) ==
