@@ -365,8 +365,8 @@ class _NewEntryPageState extends State<NewEntryPage> {
                                                         return "Value cannot be negative";
                                                       }
                                                       if (int.parse(value) >
-                                                          1000) {
-                                                        return "Value cannot be greater than 1000";
+                                                          2000) {
+                                                        return "Value cannot be greater than 2000";
                                                       }
                                                       return null;
                                                     },

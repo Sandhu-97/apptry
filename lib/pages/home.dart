@@ -146,11 +146,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, 'login');
-                    },
-                    child: Text("Logout"))
               ],
             ),
           ),
