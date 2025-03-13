@@ -107,12 +107,12 @@ Future<Map> fetchVarietyWiseTotalBags({String phone = ""}) async {
   final List<String> addQuery = [
     Query.select(varietyPairs),
     Query.equal('type', 'add'),
-    Query.limit(100)
+    Query.limit(200)
   ];
   final List<String> removeQuery = [
     Query.select(varietyPairs),
     Query.equal('type', 'remove'),
-    Query.limit(100)
+    Query.limit(200)
   ];
   if (phone.isNotEmpty) {
     addQuery.add(Query.equal('phone', phone));
@@ -170,7 +170,7 @@ Future<List> fetchSlipHistory() async {
             ['phone', 'slip', 'type', '\$createdAt'],
           ),
           Query.orderDesc('slip'),
-          Query.limit(100),
+          Query.limit(200),
         ]);
     return result.documents;
   } catch (e) {
@@ -191,7 +191,7 @@ Future<List> fetchSlipHistoryByPhone(String phone) async {
           ),
           Query.equal('phone', phone),
           Query.orderDesc('slip'),
-          Query.limit(100),
+          Query.limit(200),
         ]);
     return result.documents;
   } catch (e) {
