@@ -26,10 +26,12 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
   num seed = 0;
   num goli = 0;
   num cut = 0;
+  Stopwatch stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
+    stopwatch.start();
     loadAllDetails();
   }
 
@@ -48,9 +50,8 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
       seed = 0;
       goli = 0;
       cut = 0;
-      
+
       num totalCustomersApiCall = await fetchTotalCustomersCount();
-      num totalBagsApiCall = await fetchTotalBags();
 
       varietyWiseMap = await fetchVarietyWiseTotalBags();
       pukhraj = varietyWiseMap['pukhraj_ration'] +
@@ -127,8 +128,11 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
           varietyWiseMap['others_cut'];
       setState(() {
         totalCustomers = totalCustomersApiCall;
-        totalBags = totalBagsApiCall;
+        totalBags =
+            pukhraj + jyoti + diamant + cardinal + himalini + badshah + others;
         _isLoading = false;
+        stopwatch.stop();
+        print('Cold Store Details Page: ${stopwatch.elapsedMilliseconds}ms');
       });
     } catch (e) {
       setState(() {
