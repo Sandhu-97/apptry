@@ -132,6 +132,7 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
             pukhraj + jyoti + diamant + cardinal + himalini + badshah + others;
         _isLoading = false;
         stopwatch.stop();
+        // ignore: avoid_print
         print('Cold Store Details Page: ${stopwatch.elapsedMilliseconds}ms');
       });
     } catch (e) {
