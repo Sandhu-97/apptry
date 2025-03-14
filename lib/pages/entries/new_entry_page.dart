@@ -1,4 +1,5 @@
 import 'package:apptry/backend/database.dart';
+import 'package:apptry/components/dialog_box.dart';
 import 'package:apptry/constants.dart';
 import 'package:apptry/models/variety_model.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,15 @@ class _NewEntryPageState extends State<NewEntryPage> {
       _nameController.text = name;
       _isNameLoading = false;
     });
+  }
+
+  void _showDialog(String title, String content) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => DialogBox(
+              title: title,
+              content: content,
+            ));
   }
 
   @override
@@ -515,9 +525,17 @@ class _NewEntryPageState extends State<NewEntryPage> {
                         final phone = _phoneController.text;
                         final slip = int.tryParse(_slipController.text) ?? -1;
                         final varietyMap = varietyModel.getMap();
+
                         if (varietyMap.isEmpty) {
                           throw Exception("Fields cannot be empty");
                         }
+                        if (phone.length != 10) {
+                          throw Exception("Phone number must be 10 digits");
+                        }
+                        if (slip < 0) {
+                          throw Exception("Invalid slip number");
+                        }
+
                         await addNewLog(phone, slip, type, varietyMap);
                         varietyModel.deleteMap();
                         setState(() {
@@ -526,91 +544,9 @@ class _NewEntryPageState extends State<NewEntryPage> {
                           }
                         });
 
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Colors.white, Colors.green.shade50],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    color: Colors.green.shade900,
-                                    size: 50,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    "Success!",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green.shade900,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    "Entry added to the log book",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.green.shade800,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  ElevatedButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green.shade900,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 32,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      "Close",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
+                        _showDialog("Success", "Entry added to the log book!");
                       } catch (e) {
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: Text("Error"),
-                                  backgroundColor: Colors.red.shade200,
-                                  content: Text(e.toString()),
-                                  contentPadding: EdgeInsets.all(30),
-                                  actions: [
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Close"))
-                                  ],
-                                ));
+                        _showDialog("Error", e.toString());
                       } finally {
                         _isFormSubmitting = false;
                       }

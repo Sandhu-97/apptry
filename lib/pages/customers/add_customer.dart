@@ -1,3 +1,4 @@
+import 'package:apptry/components/dialog_box.dart';
 import 'package:apptry/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:apptry/backend/database.dart';
@@ -17,74 +18,11 @@ class _AddNewCustomerPageState extends State<AddNewCustomerPage> {
 
   void _showDialog(String title, String content) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.white, Colors.green.shade50],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.check_circle_outline,
-                color: Colors.green.shade900,
-                size: 50,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                "Success!",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade900,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                "Customer added to the database",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.green.shade800,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade900,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                ),
-                child: const Text(
-                  "Close",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+        context: context,
+        builder: (BuildContext context) => DialogBox(
+              title: title,
+              content: content,
+            ));
   }
 
   Future<void> _addCustomer() async {
