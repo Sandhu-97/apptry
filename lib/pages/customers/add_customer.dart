@@ -1,3 +1,4 @@
+import 'package:apptry/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:apptry/backend/database.dart';
 
@@ -61,7 +62,7 @@ class _AddNewCustomerPageState extends State<AddNewCustomerPage> {
       try {
         bool created = await createNewCustomer(
           _phoneController.text.trim(),
-          _nameController.text.trim(),
+          _nameController.text.trim().toTitleCase,
         );
 
         setState(() {
@@ -122,7 +123,8 @@ class _AddNewCustomerPageState extends State<AddNewCustomerPage> {
                     decoration: InputDecoration(
                       labelText: 'Phone Number',
                       labelStyle: TextStyle(color: Colors.green.shade900),
-                      prefixIcon: Icon(Icons.phone, color: Colors.green.shade900),
+                      prefixIcon:
+                          Icon(Icons.phone, color: Colors.green.shade900),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(color: Colors.green.shade300),
@@ -133,7 +135,8 @@ class _AddNewCustomerPageState extends State<AddNewCustomerPage> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.green.shade900, width: 2),
+                        borderSide:
+                            BorderSide(color: Colors.green.shade900, width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
