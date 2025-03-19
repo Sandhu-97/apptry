@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     loadTotalBags();
+    getAllCustomers();
   }
 
   void loadTotalBags() async {

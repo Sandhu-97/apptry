@@ -1,3 +1,7 @@
+final String databaseId = '678e7809002853909806';
+final String customersCollectionId = '678e79590024bed88403';
+final String logsCollectionId = '67d04f6b002e5a444eb4';
+
 final varietyNames = [
   'Pukhraj',
   'Jyoti',

@@ -8,11 +8,12 @@ Client client = Client().setProject('678a72290036051ffd0a');
 
 Databases databases = Databases(client);
 
-final String databaseId = '678e7809002853909806';
-final String customersCollectionId = '678e79590024bed88403';
-final String logsCollectionId = '67d04f6b002e5a444eb4';
+List<Document> cachedLogs = [];
+List<Document> cachedCustomers = [];
 
 final int slipLimit = 300;
+
+List<Document> getCachedCustomers() => cachedCustomers;
 
 Future<bool> createNewCustomer(String phone, String name) async {
   try {
@@ -205,10 +206,12 @@ Future<List> fetchSlipHistoryByPhone(String phone) async {
 
 Future<List<Document>> getAllCustomers() async {
   try {
-    final result = await databases.listDocuments(
+        final result = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: customersCollectionId,
         queries: [Query.orderAsc('name'), Query.limit(100)]);
+
+    cachedCustomers = result.documents;
     return result.documents;
   } catch (e) {
     print(e);

@@ -22,6 +22,23 @@ class _CustomerPageState extends State<CustomerPage> {
 
   Future<void> loadCustomers() async {
     try {
+      final customers = getCachedCustomers();
+      setState(() {
+        allCustomers = customers;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> reloadCustomers() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
       final customers = await getAllCustomers();
       setState(() {
         allCustomers = customers;
@@ -30,6 +47,13 @@ class _CustomerPageState extends State<CustomerPage> {
     } catch (e) {
       setState(() {
         isLoading = false;
+        // Show snackbar or error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load customers'),
+            backgroundColor: Colors.red,
+          ),
+        );
       });
     }
   }
@@ -45,86 +69,83 @@ class _CustomerPageState extends State<CustomerPage> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          color: Colors.green.shade900,
-          onRefresh: loadCustomers,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                if (isLoading)
-                  Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green.shade900,
-                    ),
-                  )
-                else
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: allCustomers.length,
-                      itemBuilder: (context, index) {
-                        final customer = allCustomers[index];
-                        return Card(
-                          elevation: 3,
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          shape: RoundedRectangleBorder(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              if (isLoading)
+                Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green.shade900,
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: allCustomers.length,
+                    itemBuilder: (context, index) {
+                      final customer = allCustomers[index];
+                      return Card(
+                        elevation: 3,
+                        margin: EdgeInsets.symmetric(vertical: 4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.white, Colors.green.shade50],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.white, Colors.green.shade50],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(4),
-                              title: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ViewCustomerPage(
-                                        phone: customer.data['phone'],
-                                      ),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(4),
+                            title: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewCustomerPage(
+                                      phone: customer.data['phone'],
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  customer.data['name'] ?? "No name",
-                                  style: TextStyle(
-                                    color: Colors.green.shade900,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
                                   ),
+                                );
+                              },
+                              child: Text(
+                                customer.data['name'] ?? "No name",
+                                style: TextStyle(
+                                  color: Colors.green.shade900,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              subtitle: Align(
-                                alignment: Alignment.centerLeft,
-                                child: SelectableText(
-                                  customer.data['phone'] ?? "No phone",
-                                  style: TextStyle(
-                                    color: Colors.green.shade800,
-                                    fontSize: 16,
-                                  ),
+                            ),
+                            subtitle: Align(
+                              alignment: Alignment.centerLeft,
+                              child: SelectableText(
+                                customer.data['phone'] ?? "No phone",
+                                style: TextStyle(
+                                  color: Colors.green.shade800,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, 'new-customer');
+        onPressed: () async {
+          await Navigator.pushNamed(context, 'new-customer');
+          reloadCustomers();
         },
         backgroundColor: Colors.green.shade800,
         child: const Icon(
