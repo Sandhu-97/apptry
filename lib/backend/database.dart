@@ -12,6 +12,8 @@ final String databaseId = '678e7809002853909806';
 final String customersCollectionId = '678e79590024bed88403';
 final String logsCollectionId = '67d04f6b002e5a444eb4';
 
+final int slipLimit = 300;
+
 Future<bool> createNewCustomer(String phone, String name) async {
   try {
     DocumentList docs = await databases.listDocuments(
@@ -107,12 +109,12 @@ Future<Map> fetchVarietyWiseTotalBags({String phone = ""}) async {
   final List<String> addQuery = [
     Query.select(varietyPairs),
     Query.equal('type', 'add'),
-    Query.limit(200)
+    Query.limit(slipLimit)
   ];
   final List<String> removeQuery = [
     Query.select(varietyPairs),
     Query.equal('type', 'remove'),
-    Query.limit(200)
+    Query.limit(slipLimit)
   ];
   if (phone.isNotEmpty) {
     addQuery.add(Query.equal('phone', phone));
@@ -170,7 +172,7 @@ Future<List> fetchSlipHistory() async {
             ['phone', 'slip', 'type', '\$createdAt'],
           ),
           Query.orderDesc('slip'),
-          Query.limit(200),
+          Query.limit(slipLimit),
         ]);
     return result.documents;
   } catch (e) {
@@ -191,7 +193,7 @@ Future<List> fetchSlipHistoryByPhone(String phone) async {
           ),
           Query.equal('phone', phone),
           Query.orderDesc('slip'),
-          Query.limit(200),
+          Query.limit(slipLimit),
         ]);
     return result.documents;
   } catch (e) {
