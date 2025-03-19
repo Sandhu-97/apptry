@@ -27,7 +27,7 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
   }
 
   Future<void> loadSlipDetails() async {
-    name = await getName(widget.phone);
+    name = getName(widget.phone);
     setState(() {
       isLoading = true;
       error = null;
@@ -122,8 +122,17 @@ class _SlipDetailsPageState extends State<SlipDetailsPage> {
                             if (entries.isNotEmpty)
                               ...entries.first.data.entries
                                   .where(
-                                    (element) => element.value > 0,
+                                    (element) =>
+                                        (element.value is int
+                                            ? element.value
+                                            : int.tryParse(
+                                                    element.value.toString()) ??
+                                                0) >
+                                        0,
                                   )
+                                  .where((element) =>
+                                      element.key != 'slip' &&
+                                      element.key != 'phone')
                                   .map((entry) => Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8.0),

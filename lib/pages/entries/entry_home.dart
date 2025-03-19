@@ -28,7 +28,7 @@ class _EntryHomePageState extends State<EntryHomePage> {
     });
 
     try {
-      entries = await fetchSlipHistory();
+      entries = getCachedLogs();
       setState(() {
         isLoading = false;
       });
@@ -39,6 +39,32 @@ class _EntryHomePageState extends State<EntryHomePage> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load entries: $e')),
+      );
+    }
+  }
+
+  Future<void> reloadEntries() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      final freshEntries = await fetchSlipHistory();
+      setState(() {
+        entries = freshEntries;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load entries'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -56,7 +82,7 @@ class _EntryHomePageState extends State<EntryHomePage> {
       body: SafeArea(
         child: RefreshIndicator(
           color: Colors.green.shade900,
-          onRefresh: loadEntries,
+          onRefresh: reloadEntries,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: isLoading
@@ -164,8 +190,9 @@ class _EntryHomePageState extends State<EntryHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, 'new-entry');
+        onPressed: () async {
+          await Navigator.pushNamed(context, 'new-entry');
+          reloadEntries();
         },
         backgroundColor: Colors.green.shade900,
         child: const Icon(

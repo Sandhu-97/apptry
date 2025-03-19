@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     loadTotalBags();
     getAllCustomers();
+    fetchSlipHistory();
   }
 
   void loadTotalBags() async {

@@ -14,6 +14,7 @@ List<Document> cachedCustomers = [];
 final int slipLimit = 300;
 
 List<Document> getCachedCustomers() => cachedCustomers;
+List<Document> getCachedLogs() => cachedLogs;
 
 Future<bool> createNewCustomer(String phone, String name) async {
   try {
@@ -39,19 +40,17 @@ Future<bool> createNewCustomer(String phone, String name) async {
   return true;
 }
 
-Future<String> getName(String phone) async {
+String getName(String phone) {
   try {
-    DocumentList docs = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: customersCollectionId,
-        queries: [Query.equal('phone', phone)]);
-
-    String name = (docs.documents.first.data['name']);
-    return name;
+    for (var element in cachedCustomers) {
+      if (element.data['phone'].toString() == phone) {
+        return element.data['name'];
+      }
+    }
   } catch (e) {
     print(e);
   }
-  return "";
+  return "Not Found";
 }
 
 Future<num> fetchTotalCustomersCount() async {
@@ -169,12 +168,11 @@ Future<List> fetchSlipHistory() async {
         databaseId: databaseId,
         collectionId: logsCollectionId,
         queries: [
-          Query.select(
-            ['phone', 'slip', 'type', '\$createdAt'],
-          ),
           Query.orderDesc('slip'),
           Query.limit(slipLimit),
         ]);
+
+    cachedLogs = result.documents;
     return result.documents;
   } catch (e) {
     print(e);
@@ -206,7 +204,7 @@ Future<List> fetchSlipHistoryByPhone(String phone) async {
 
 Future<List<Document>> getAllCustomers() async {
   try {
-        final result = await databases.listDocuments(
+    final result = await databases.listDocuments(
         databaseId: databaseId,
         collectionId: customersCollectionId,
         queries: [Query.orderAsc('name'), Query.limit(100)]);
@@ -231,14 +229,13 @@ Future<Map> getCustomerData(String phone) async {
 
 Future<List<Document>> getEntryBySlip(String slip) async {
   try {
-    final result = await databases.listDocuments(
-        databaseId: databaseId,
-        collectionId: logsCollectionId,
-        queries: [
-          Query.equal('slip', num.parse(slip)),
-          Query.select(varietyPairs),
-        ]);
-    return result.documents;
+    List<Document> result = [];
+    for (var entry in cachedLogs) {
+      if (entry.data['slip'] == num.parse(slip)) {
+        result.add(entry);
+      }
+    }
+    return result;
   } catch (e) {
     print(e);
   }

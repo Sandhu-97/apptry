@@ -32,7 +32,7 @@ class _ViewCustomerPageState extends State<ViewCustomerPage> {
 
     try {
       customerDetails = await getCustomerData(widget.phone);
-      name = await getName(widget.phone);
+      name = getName(widget.phone);
       for (var field in customerDetails.keys) {
         total += customerDetails[field];
       }

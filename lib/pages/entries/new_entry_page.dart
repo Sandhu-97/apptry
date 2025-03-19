@@ -35,7 +35,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
   };
 
   Future<void> getLoadedName() async {
-    name = await getName(_phoneController.text);
+    name = getName(_phoneController.text);
     setState(() {
       _nameController.text = name;
       _isNameLoading = false;
@@ -162,7 +162,7 @@ class _NewEntryPageState extends State<NewEntryPage> {
                             _nameController.text = "Loading...";
                           });
                           try {
-                            final String name = await getName(value);
+                            final String name = getName(value);
                             setState(() {
                               _nameController.text = name;
                             });
