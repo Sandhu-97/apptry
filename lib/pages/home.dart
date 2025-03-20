@@ -15,14 +15,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    loadTotalBags();
-    getAllCustomers();
-    fetchSlipHistory();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    try {
+      await Future.wait([fetchSlipHistory(), getAllCustomers()]);
+      loadTotalBags();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to initialize data')),
+      );
+    }
   }
 
   void loadTotalBags() async {
     try {
-      num bags = await fetchTotalBags();
+      num bags = fetchTotalBags();
       setState(() {
         totalBags = bags;
         _isLoading = false;

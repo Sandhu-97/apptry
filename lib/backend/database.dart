@@ -87,11 +87,11 @@ Future<void> addNewLog(String phone, int slip, String type, Map data) async {
   }
 }
 
-Future<num> fetchTotalBags() async {
+num fetchTotalBags() {
   List<String> fields = [];
   fields = varietyPairs;
   try {
-    Map result = await fetchVarietyWiseTotalBags();
+    Map result = coldStoreBagsDetails();
     num total = 0;
 
     for (var pair in fields) {
