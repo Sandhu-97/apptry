@@ -162,6 +162,29 @@ Future<Map> fetchVarietyWiseTotalBags({String phone = ""}) async {
   return {};
 }
 
+Map coldStoreBagsDetails() {
+  Map result = {};
+  try {
+    for (var pair in varietyPairs) {
+      result[pair] = 0;
+    }
+    for (var entry in cachedLogs) {
+      if (entry.data['type'] == 'add') {
+        for (var pair in varietyPairs) {
+          result[pair] += entry.data[pair];
+        }
+      } else {
+        for (var pair in varietyPairs) {
+          result[pair] -= entry.data[pair];
+        }
+      }
+    }
+  } catch (e) {
+    print(e);
+  }
+  return result;
+}
+
 Future<List> fetchSlipHistory() async {
   try {
     final result = await databases.listDocuments(

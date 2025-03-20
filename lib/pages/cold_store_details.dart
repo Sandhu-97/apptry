@@ -35,7 +35,7 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
     loadAllDetails();
   }
 
-  Future<void> loadAllDetails() async {
+  void loadAllDetails() {
     try {
       pukhraj = 0;
       jyoti = 0;
@@ -51,9 +51,9 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
       goli = 0;
       cut = 0;
 
-      num totalCustomersApiCall = await fetchTotalCustomersCount();
+      num totalCustomersApiCall = getCachedCustomers().length;
 
-      varietyWiseMap = await fetchVarietyWiseTotalBags();
+      varietyWiseMap = coldStoreBagsDetails();
       pukhraj = varietyWiseMap['pukhraj_ration'] +
           varietyWiseMap['pukhraj_goli'] +
           varietyWiseMap['pukhraj_seed'] +
@@ -155,31 +155,27 @@ class _ColdStoreDetailsState extends State<ColdStoreDetails> {
         backgroundColor: Colors.green.shade900,
         elevation: 0,
       ),
-      body: RefreshIndicator(
-        color: Colors.green.shade900,
-        onRefresh: loadAllDetails,
-        child: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                color: Colors.green.shade900,
-              ))
-            : SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSummaryCard(),
-                      const SizedBox(height: 20),
-                      _buildVarietyBreakdown('Variety Breakdown'),
-                      const SizedBox(height: 20),
-                      _buildVarietyBreakdown('Sub Variety Breakdown'),
-                    ],
-                  ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+              color: Colors.green.shade900,
+            ))
+          : SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSummaryCard(),
+                    const SizedBox(height: 20),
+                    _buildVarietyBreakdown('Variety Breakdown'),
+                    const SizedBox(height: 20),
+                    _buildVarietyBreakdown('Sub Variety Breakdown'),
+                  ],
                 ),
               ),
-      ),
+            ),
     );
   }
 
