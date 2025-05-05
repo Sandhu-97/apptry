@@ -11,7 +11,7 @@ Databases databases = Databases(client);
 List<Document> cachedLogs = [];
 List<Document> cachedCustomers = [];
 
-final int slipLimit = 300;
+final int slipLimit = 500;
 
 List<Document> getCachedCustomers() => cachedCustomers;
 List<Document> getCachedLogs() => cachedLogs;
@@ -81,6 +81,7 @@ Future<void> addNewLog(String phone, int slip, String type, Map data) async {
         collectionId: logsCollectionId,
         documentId: ID.unique(),
         data: output);
+    cachedLogs.insert(0, document);
   } catch (e) {
     print('Error in addNewLog: $e');
     rethrow;
